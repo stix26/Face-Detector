@@ -10,3 +10,4 @@ Step 4: cd "Face-Detector-master"
 
 Step 5: python3 face_detector.py (and press enter)
 
+README directions: https://www.youtube.com/watch?v=9LAQIk5WW00
