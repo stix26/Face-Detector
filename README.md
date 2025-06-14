@@ -1,13 +1,26 @@
-# Face-Detector
+# Face Detector
 
-Step 1: Download File
+This project demonstrates simple face detection using OpenCV's Haar cascade classifier.
 
-Step 2: Open Terminal
+## Requirements
+- Python 3.8+
+- `opencv-python-headless`
+- `pytest` (for running tests)
 
-Step 3: cd downloads
+Install dependencies:
+```bash
+pip install -e .[test]
+```
 
-Step 4: cd "Face-Detector-master"
+## Usage
+Run face detection on an image:
+```bash
+python face_detector.py path/to/image.jpg --output annotated.jpg
+```
+Use `--display` to show the result in a window (requires GUI support).
 
-Step 5: python3 face_detector.py (and press enter)
-
-README directions: https://www.youtube.com/watch?v=9LAQIk5WW00
+## Testing
+Unit tests are provided with `pytest`:
+```bash
+pytest
+```
