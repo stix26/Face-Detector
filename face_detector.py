@@ -1,22 +1,41 @@
+import argparse
+from pathlib import Path
+
 import cv2
 
-face_cascade=cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+CASCADE_PATH = Path(__file__).with_name("haarcascade_frontalface_default.xml")
 
-img=cv2.imread("photo.jpg")
-gray_img=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+def detect_faces(image_path: Path):
+    """Load an image and return it along with detected face rectangles."""
+    img = cv2.imread(str(image_path))
+    if img is None:
+        raise FileNotFoundError(f"Unable to read image {image_path}")
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    cascade = cv2.CascadeClassifier(str(CASCADE_PATH))
+    faces = cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
+    return img, faces
 
-faces=face_cascade.detectMultiScale(gray_img,
-scaleFactor=1.1,
-minNeighbors=5)
+def annotate_image(img, faces):
+    for x, y, w, h in faces:
+        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    return img
 
-for x, y, w, h in faces:
-    img=cv2.rectangle(img, (x,y),(x+w,y+h),(0,255,0),3)
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="Detect faces in an image")
+    parser.add_argument("image", type=Path, help="Path to input image")
+    parser.add_argument("--output", type=Path, default=Path("output.jpg"), help="Output annotated image path")
+    parser.add_argument("--display", action="store_true", help="Display the annotated image")
+    args = parser.parse_args(argv)
 
-print(type(faces))
-print(faces)
+    img, faces = detect_faces(args.image)
+    annotated = annotate_image(img.copy(), faces)
+    cv2.imwrite(str(args.output), annotated)
+    print(f"Found {len(faces)} face(s). Saved result to {args.output}")
 
-resized=cv2.resize(img,(int(img.shape[1]/3),int(img.shape[0]/3)))
+    if args.display:
+        cv2.imshow("Faces", annotated)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
-cv2.imshow("Gray",resized)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+if __name__ == "__main__":
+    main()
